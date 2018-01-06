@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.test_recyclerView);
-        final View container_multOptions = findViewById(R.id.container_multSelectMode_options);
+        final View container_multiOptions = findViewById(R.id.container_multSelectMode_options);
         final View container_singleOption = findViewById(R.id.container_SingleSelectMode_option);
         StringScrollPicker stringScrollPicker = (StringScrollPicker) findViewById(R.id.max_select_count_pv);
 
@@ -56,15 +56,15 @@ public class MainActivity extends AppCompatActivity {
                 if (position == 0) {
                     myAdapter.setSelectMode(EasyAdapter.SelectMode.CLICK);
                     container_singleOption.setVisibility(View.GONE);
-                    container_multOptions.setVisibility(View.GONE);
+                    container_multiOptions.setVisibility(View.GONE);
                 } else if (position == 1) {
                     myAdapter.setSelectMode(EasyAdapter.SelectMode.SINGLE_SELECT);
                     container_singleOption.setVisibility(View.VISIBLE);
-                    container_multOptions.setVisibility(View.GONE);
+                    container_multiOptions.setVisibility(View.GONE);
                 } else if (position == 2) {
-                    myAdapter.setSelectMode(EasyAdapter.SelectMode.MULT_SELECT);
+                    myAdapter.setSelectMode(EasyAdapter.SelectMode.MULTI_SELECT);
                     container_singleOption.setVisibility(View.GONE);
-                    container_multOptions.setVisibility(View.VISIBLE);
+                    container_multiOptions.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //监听多选
-        myAdapter.setOnItemMultSelectListener(new EasyAdapter.OnItemMultSelectListener() {
+        myAdapter.setOnItemMultiSelectListener(new EasyAdapter.OnItemMultiSelectListener() {
             @Override
-            public void onMultSelected(int multSelectedPosition) {
-                Toast.makeText(MainActivity.this, "multSelectedPosition:" + multSelectedPosition, Toast.LENGTH_SHORT).show();
+            public void onMultiSelected(int multiSelectedPosition) {
+                Toast.makeText(MainActivity.this, "multiSelectedPosition:" + multiSelectedPosition, Toast.LENGTH_SHORT).show();
             }
         });
 
-        myAdapter.setSelectMode(EasyAdapter.SelectMode.MULT_SELECT); // 切换到单选模式，此时RecyclerView+Adapter就是一个单选框
+        myAdapter.setSelectMode(EasyAdapter.SelectMode.MULTI_SELECT); // 切换到单选模式，此时RecyclerView+Adapter就是一个单选框
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); //把列表设置成水平滚动
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
         myAdapter.reverseSelected();
     }
 
-    public void btnShowMultSelected(View view) {
+    public void btnShowMultiSelected(View view) {
         List<Integer> selectedList = myAdapter.getMultSelectedPosition();
-        Toast.makeText(MainActivity.this, "btnShowMultSelected:" + selectedList.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "btnShowMultiSelected:" + selectedList.toString(), Toast.LENGTH_SHORT).show();
     }
 
     public void btnClearSelected(View view) {

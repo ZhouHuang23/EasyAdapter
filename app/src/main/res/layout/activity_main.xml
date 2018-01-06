@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
-                android:onClick="btnShowMultSelected"
+                android:onClick="btnShowMultiSelected"
                 android:text="展示"
                 android:textColor="#000"
                 android:textSize="16dp" />
