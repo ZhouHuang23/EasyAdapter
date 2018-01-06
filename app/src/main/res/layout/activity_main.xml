@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.administrator.recyclerviewtest.MainActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/test_recyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <Spinner
+        android:id="@+id/spinner_mode_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/languages">
+
+    </Spinner>
+
+    <LinearLayout
+        android:id="@+id/container_SingleSelectMode_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_showSingleSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:onClick="btnShowSingleSelected"
+            android:text="展示"
+            android:textColor="#000"
+            android:textSize="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_multSelectMode_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="最大选择数量："
+                android:textColor="#000"
+                android:textSize="16dp" />
+
+            <cn.forward.androids.views.StringScrollPicker
+                android:id="@+id/max_select_count_pv"
+                android:layout_width="60dp"
+                android:layout_height="160dp"
+                android:layout_marginLeft="18dp"
+                app:spv_max_text_size="20dp"
+                app:spv_min_text_size="14dp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_selectedAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:onClick="btnSelectedAll"
+                android:text="全选"
+                android:textColor="#000"
+                android:textSize="16dp" />
+
+            <Button
+                android:id="@+id/btn_showSelected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:onClick="btnShowMultSelected"
+                android:text="展示"
+                android:textColor="#000"
+                android:textSize="16dp" />
+
+            <Button
+                android:id="@+id/btn_clearSelected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:onClick="btnClearSelected"
+                android:text="清除"
+                android:textColor="#000"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/btn_reverseSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:onClick="btnReverseSelected"
+            android:text="反选"
+            android:textColor="#000"
+            android:textSize="16dp" />
+
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="30dp" />
+
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <cn.forward.androids.views.STextView
+        android:id="@+id/txt_item"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="哈哈"
+        android:textColor="#000000"
+        android:textSize="16dp"
+        app:stv_text_color_pressed="#ff0000"
+        app:stv_text_color_selected="#ff0000" />
+</LinearLayout>

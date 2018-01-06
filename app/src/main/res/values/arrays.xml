@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="languages">
+        <item>点击模式</item>
+        <item>单选模式 </item>
+        <item>多选模式</item>
+    </string-array>
+</resources>
