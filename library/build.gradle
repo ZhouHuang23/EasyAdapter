@@ -9,7 +9,6 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -19,6 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
@@ -29,4 +32,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:21.0.+'
+}
+if (isForUpload2Maven()) { // 判断是否需要上传到远程仓库，不需要上传就不会执行下面的脚本，加快编译速度
+    //apply from: "https://raw.githubusercontent.com/1993hzw/common/master/bintrayUpload.gradle"
+    apply from: "bintrayUpload.gradle"
 }
