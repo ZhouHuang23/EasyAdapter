@@ -2,6 +2,7 @@ package com.hz.android.easyadapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,25 +62,29 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
 
     @Override
     public void onClick(View v) {
-
         int itemPosition = (int) v.getTag();
-
-        if (onItemClickListener != null && selectMode == SelectMode.CLICK) {//点击模式
-            onItemClickListener.onClicked(itemPosition);
-        } else if (onItemSelectListener != null && selectMode == SelectMode.SINGLE_SELECT) { //单选模式
-            onItemSelectListener.onSelected(itemPosition);
+        if (selectMode == SelectMode.CLICK) {//点击模式
+            if (onItemClickListener != null) {
+                onItemClickListener.onClicked(itemPosition);
+            }
+        } else if (selectMode == SelectMode.SINGLE_SELECT) { //单选模式
             singleSelected = itemPosition;
+            if (onItemSelectListener != null) {
+                onItemSelectListener.onSelected(itemPosition);
+            }
             notifyDataSetChanged();//通知刷新
-        } else if (onItemMultiSelectListener != null && selectMode == SelectMode.MULTI_SELECT) {//多选模式
+        } else if (selectMode == SelectMode.MULTI_SELECT) {//多选模式
             if (maxSelectedCount <= 0  //选择不受限制
                     || multiSelected.size() < maxSelectedCount) {  // 选择个数需要小于最大可选数
-                onItemMultiSelectListener.onMultiSelected(itemPosition);
                 if (multiSelected.contains(itemPosition)) {
                     multiSelected.remove((Object) itemPosition);
                 } else {
                     multiSelected.add(itemPosition);
                 }
-            } else if (multiSelected.size() == maxSelectedCount&& multiSelected.contains(itemPosition)){ //当等于最大数量并且点击的item包含在已选中 可清除
+                if (onItemMultiSelectListener != null) {
+                    onItemMultiSelectListener.onMultiSelected(itemPosition);
+                }
+            } else if (multiSelected.size() == maxSelectedCount && multiSelected.contains(itemPosition)) { //当等于最大数量并且点击的item包含在已选中 可清除
                 multiSelected.remove((Object) itemPosition);
             }
             notifyDataSetChanged();

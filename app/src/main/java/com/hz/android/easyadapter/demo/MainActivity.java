@@ -73,7 +73,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        // 监听点击事件
+
+        //监听单选
+        myAdapter.setOnItemSelectListener(new EasyAdapter.OnItemSelectListener() {
+            @Override
+            public void onSelected(int selectedPosition) {
+                Toast.makeText(MainActivity.this, "selectedPosition:" + selectedPosition  +" == "+ myAdapter.getSingleSelectedPosition(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        /*// 监听点击事件
         myAdapter.setOnItemClickListener(new EasyAdapter.OnItemClickListener() {
             @Override
             public void onClicked(int clickPosition) {
@@ -95,22 +105,24 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "multiSelectedPosition:" + multiSelectedPosition, Toast.LENGTH_SHORT).show();
             }
         });
-
-        myAdapter.setSelectMode(EasyAdapter.SelectMode.MULTI_SELECT); // 切换到单选模式，此时RecyclerView+Adapter就是一个单选框
+*/
+        //select_mode_spinner.setSelection(0); //点击
+        //select_mode_spinner.setSelection(1); //单选 此时RecyclerView+Adapter就是一个单选框
+        select_mode_spinner.setSelection(2); //多选
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); //把列表设置成水平滚动
         recyclerView.setLayoutManager(linearLayoutManager);
 
         recyclerView.setAdapter(myAdapter);
 
-        // myAdapter.setSelected(1, 3, 5); // 作为用户 希望多选模式下 和单选模式 都一样可以调用
+        // myAdapter.setSelected(1, 3, 5); // 多选模式下 和单选模式 都一样可以调用
 
     }
 
     //监听按钮
     public void btnShowSingleSelected(View view) {
         int singleSelectedPosition = myAdapter.getSingleSelectedPosition();
-        Toast.makeText(MainActivity.this, "btnShowSingleSelected:" +singleSelectedPosition , Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "btnShowSingleSelected:" + singleSelectedPosition, Toast.LENGTH_SHORT).show();
 
     }
 
