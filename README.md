@@ -3,6 +3,19 @@
 ##### 介绍
 EasyAdapter是用于RecyclerView的适配器，在原有的适配器基础上可支持监听相应的事件并设置点击模式、单选和多选模式。在多选模式下，可设置最大可选数量，以及提供了全选、反选等接口。
 ##### 使用
+Gradle
+```
+compile 'com.hz.androids.easyadapter:library:1.1'
+```
+or Maven
+```
+<dependency>
+  <groupId>com.hz.androids.easyadapter</groupId>
+  <artifactId>library</artifactId>
+  <version>1.1</version>
+  <type>pom</type>
+</dependency>
+```
 1.自定义Adapter继承EasyAdapter
 
 ```java
@@ -49,7 +62,7 @@ myAdapter.setSelectMode(EasyAdapter.SelectMode.MULTI_SELECT);
 // 监听点击事件
 myAdapter.setOnItemClickListener(new EasyAdapter.OnItemClickListener() {
     @Override
-    public void onClicked(int clickPosition) {
+    public void onSelected(int clickPosition) {
         ...
     }
 });

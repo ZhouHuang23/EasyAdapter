@@ -2,7 +2,6 @@ package com.hz.android.easyadapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> implements View.OnClickListener {
     private OnItemClickListener onItemClickListener;
-    private OnItemSelectListener onItemSelectListener;
+    private OnItemSingleSelectListener onItemSingleSelectListener;
     private OnItemMultiSelectListener onItemMultiSelectListener;
     private SelectMode selectMode;
 
@@ -22,8 +21,8 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void setOnItemSelectListener(OnItemSelectListener onItemSelectListener) {
-        this.onItemSelectListener = onItemSelectListener;
+    public void setOnItemSingleSelectListener(OnItemSingleSelectListener onItemSingleSelectListener) {
+        this.onItemSingleSelectListener = onItemSingleSelectListener;
     }
 
     public void setOnItemMultiSelectListener(OnItemMultiSelectListener onItemMultiSelectListener) {
@@ -39,7 +38,7 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
     @Override
     public void onBindViewHolder(VH holder, int position) {
         whenBindViewHolder(holder, position);
-        //
+
         holder.itemView.setTag(position);
         holder.itemView.setOnClickListener(this);
 
@@ -68,28 +67,41 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
                 onItemClickListener.onClicked(itemPosition);
             }
         } else if (selectMode == SelectMode.SINGLE_SELECT) { //单选模式
-            singleSelected = itemPosition;
-            if (onItemSelectListener != null) {
-                onItemSelectListener.onSelected(itemPosition);
+            if (onItemSingleSelectListener != null) {
+                if (singleSelected == itemPosition) {
+                    onItemSingleSelectListener.onSelected(itemPosition, false);
+                } else {
+                    singleSelected = itemPosition;
+                    onItemSingleSelectListener.onSelected(itemPosition, true);
+                }
             }
             notifyDataSetChanged();//通知刷新
         } else if (selectMode == SelectMode.MULTI_SELECT) {//多选模式
             if (maxSelectedCount <= 0  //选择不受限制
                     || multiSelected.size() < maxSelectedCount) {  // 选择个数需要小于最大可选数
                 if (multiSelected.contains(itemPosition)) {
-                    multiSelected.remove((Object) itemPosition);
+                    multiSelected.remove((Integer) itemPosition);
+                    if (onItemMultiSelectListener != null) {
+                        onItemMultiSelectListener.onSelected(Operation.ORDINARY, itemPosition, false);
+                    }
                 } else {
                     multiSelected.add(itemPosition);
+                    if (onItemMultiSelectListener != null) {
+                        onItemMultiSelectListener.onSelected(Operation.ORDINARY, itemPosition, true);
+                    }
                 }
-                if (onItemMultiSelectListener != null) {
-                    onItemMultiSelectListener.onMultiSelected(itemPosition);
-                }
+
             } else if (multiSelected.size() == maxSelectedCount && multiSelected.contains(itemPosition)) { //当等于最大数量并且点击的item包含在已选中 可清除
-                multiSelected.remove((Object) itemPosition);
+                multiSelected.remove((Integer) itemPosition);
+                if (onItemMultiSelectListener != null) {
+                    onItemMultiSelectListener.onSelected(Operation.ORDINARY, itemPosition, false);
+                }
             }
             notifyDataSetChanged();
         }
     }
+
+    //=========API=========
 
     /**
      * 设置选择模式
@@ -103,6 +115,15 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
     }
 
     /**
+     * 获取选择模式
+     *
+     * @return
+     */
+    public SelectMode getSelectMode() {
+        return selectMode;
+    }
+
+    /**
      * 设置默认选中项，一个或多个
      *
      * @param itemPositions
@@ -112,21 +133,38 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
         multiSelected.clear();
         if (selectMode == SelectMode.SINGLE_SELECT) {
             singleSelected = itemPositions[0];
+            if (onItemSingleSelectListener != null) {
+                onItemSingleSelectListener.onSelected(singleSelected, true);
+            }
         } else {
             for (int itemPosition : itemPositions) {
                 multiSelected.add(itemPosition);
+                if (onItemMultiSelectListener != null) {
+                    onItemMultiSelectListener.onSelected(Operation.ORDINARY, itemPosition, true);
+                }
             }
         }
         notifyDataSetChanged();
     }
 
     /**
+     * 获取单选模式选中Item位置
+     *
+     * @return
+     */
+    public int getSingleSelected() {
+        return singleSelected;
+    }
+
+    /**
      * 清除选择项，只有在MULT_SELECT模式下有效
      */
-    public void clearSelected() { // 这个方法只在多选模式下生效
-
+    public void clearSelected() {
         if (selectMode == SelectMode.MULTI_SELECT) {
             multiSelected.clear();
+            if (onItemMultiSelectListener != null) {
+                onItemMultiSelectListener.onSelected(Operation.ALL_CANCEL, -1, false);
+            }
         }
         notifyDataSetChanged();
     }
@@ -139,23 +177,35 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
     }
 
     /**
-     * 获取多选项位置
+     * 获取多选项位置，元素顺序按照选择顺序排列
      */
-    public List<Integer> getMultSelectedPosition() {
+    public List<Integer> getMultiSelectedPosition() {
         return multiSelected;
     }
 
     /**
-     * 设置最大可选数量，
+     * 设置最大可选数量
      *
      * @param maxSelectedCount maxSelectedCount <= 0 表示不限制选择数
      */
     public void setMaxSelectedCount(int maxSelectedCount) {
         if (maxSelectedCount < multiSelected.size()) {
             multiSelected.clear();
+            if (onItemMultiSelectListener != null) {
+                onItemMultiSelectListener.onSelected(Operation.SET_MAX_COUNT, -1, false);
+            }
         }
         this.maxSelectedCount = maxSelectedCount;
         notifyDataSetChanged();
+    }
+
+    /**
+     * 获取最大可选数目
+     *
+     * @return
+     */
+    public int getMaxSelectedCount() {
+        return maxSelectedCount;
     }
 
     /**
@@ -167,6 +217,10 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
             for (int i = 0; i < getItemCount(); i++) {
                 multiSelected.add(i);
             }
+            if (onItemMultiSelectListener != null) {
+                onItemMultiSelectListener.onSelected(Operation.ALL_SELECTED, -1, false);
+            }
+
             notifyDataSetChanged();
         }
     }
@@ -174,32 +228,91 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
     /**
      * 反选全部,仅在maxSelectedCount <= 0 不限制选择数时有效
      */
+
     public void reverseSelected() {
         if (maxSelectedCount <= 0) {
             for (int i = 0; i < getItemCount(); i++) {
                 if (multiSelected.contains(i)) {
-                    multiSelected.remove((Object) i);
+                    multiSelected.remove((Integer) i);
                 } else {
                     multiSelected.add(i);
                 }
+            }
+            if (onItemMultiSelectListener != null) {
+                onItemMultiSelectListener.onSelected(Operation.REVERSE_SELECTED, -1, false);
             }
             notifyDataSetChanged();
         }
     }
 
+    /**
+     * 判断某个item位置是否被选中
+     *
+     * @param position
+     * @return
+     */
+    public boolean isSelected(int position) {
+        if (selectMode == SelectMode.SINGLE_SELECT) {
+            return position == singleSelected;
+        } else if (selectMode == SelectMode.MULTI_SELECT) {
+            return multiSelected.contains(position);
+        }
+        return false;
+    }
+
+    /**
+     * 点选模式监听接口
+     */
     public interface OnItemClickListener {
+        /**
+         * 点选模式下，点击item时回调
+         *
+         * @param itemPosition 点击的item位置
+         */
         void onClicked(int itemPosition);
     }
 
-    public interface OnItemSelectListener {
-        void onSelected(int itemPosition);
+    /**
+     * 单选模式监听接口
+     */
+    public interface OnItemSingleSelectListener {
+        /**
+         * 单选模式下，点击Item选中时回调
+         *
+         * @param itemPosition 点击的item位置
+         * @param isSelected   是否选中
+         */
+        void onSelected(int itemPosition, boolean isSelected);
+
     }
 
+    /**
+     * 多选模式监听接口
+     */
     public interface OnItemMultiSelectListener {
-        void onMultiSelected(int itemPosition);
+        /**
+         * 多选模式下，点击Item选中时回调
+         *
+         * @param operation    操作类型，分为普通，全选 反选 取消全部等。
+         * @param itemPosition 点击的item位置 仅在操作类型为普通时生效
+         * @param isSelected   是否选中 仅在操作类型为普通时生效
+         */
+        void onSelected(Operation operation, int itemPosition, boolean isSelected);
+
     }
 
+
+    /**
+     * 选择模式，分为点击，单选，多选。
+     */
     public enum SelectMode {
         CLICK, SINGLE_SELECT, MULTI_SELECT
+    }
+
+    /**
+     * 操作类型，分为普通，全选 反选 取消全部等。
+     */
+    public enum Operation {
+        ORDINARY, ALL_SELECTED, REVERSE_SELECTED, ALL_CANCEL, SET_MAX_COUNT
     }
 }
