@@ -165,8 +165,8 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
             if (onItemMultiSelectListener != null) {
                 onItemMultiSelectListener.onSelected(Operation.ALL_CANCEL, -1, false);
             }
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
     }
 
     /**
@@ -191,11 +191,11 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
     public void setMaxSelectedCount(int maxSelectedCount) {
         if (maxSelectedCount < multiSelected.size()) {
             multiSelected.clear();
-            if (onItemMultiSelectListener != null) {
-                onItemMultiSelectListener.onSelected(Operation.SET_MAX_COUNT, -1, false);
-            }
         }
         this.maxSelectedCount = maxSelectedCount;
+        if (onItemMultiSelectListener != null) {
+            onItemMultiSelectListener.onSelected(Operation.SET_MAX_COUNT, -1, false);
+        }
         notifyDataSetChanged();
     }
 
@@ -220,7 +220,6 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
             if (onItemMultiSelectListener != null) {
                 onItemMultiSelectListener.onSelected(Operation.ALL_SELECTED, -1, false);
             }
-
             notifyDataSetChanged();
         }
     }
@@ -300,7 +299,6 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
         void onSelected(Operation operation, int itemPosition, boolean isSelected);
 
     }
-
 
     /**
      * 选择模式，分为点击，单选，多选。
