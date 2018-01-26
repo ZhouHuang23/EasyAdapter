@@ -230,15 +230,15 @@ public abstract class EasyAdapter<VH extends RecyclerView.ViewHolder> extends Re
 
     public void reverseSelected() {
         if (maxSelectedCount <= 0) {
+            if (onItemMultiSelectListener != null) {
+                onItemMultiSelectListener.onSelected(Operation.REVERSE_SELECTED, -1, false);
+            }
             for (int i = 0; i < getItemCount(); i++) {
                 if (multiSelected.contains(i)) {
                     multiSelected.remove((Integer) i);
                 } else {
                     multiSelected.add(i);
                 }
-            }
-            if (onItemMultiSelectListener != null) {
-                onItemMultiSelectListener.onSelected(Operation.REVERSE_SELECTED, -1, false);
             }
             notifyDataSetChanged();
         }
